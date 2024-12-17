@@ -75,51 +75,45 @@ type Parser interface {
 	Parse(string) error
 }
 
-type stringParser struct {
-	destination *string
+type StringType interface {
+	~string
 }
 
-// String creates a parser that will parse a path element into s.
-func String(s *string) Parser {
-	return &stringParser{destination: s}
+type stringParser[T StringType] struct {
+	destination *T
 }
 
-func (p *stringParser) Parse(s string) error {
-	*p.destination = s
+func (p *stringParser[T]) Parse(s string) error {
+	*p.destination = T(s)
 	return nil
 }
 
-type intParser struct {
-	destination *int
+// String creates a parser that will parse a path element into s.
+func String[T StringType](s *T) Parser {
+	return &stringParser[T]{destination: s}
 }
 
-// Int creates a Parser that will parse a path element into i.
-func Int(i *int) Parser {
-	return &intParser{destination: i}
+// IntType represents any type compatible with the Go integer built-in types,
+// to be used as a destination for writing the value of an url path element.
+type IntType interface {
+	~int | ~int8 | ~int16 | ~int32 | ~int64 |
+		~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64
 }
 
-func (p *intParser) Parse(s string) error {
+type intParser[T IntType] struct {
+	destination *T
+}
+
+func (p *intParser[T]) Parse(s string) error {
 	i, err := strconv.Atoi(s)
 	if err != nil {
 		return err
 	}
-	*p.destination = i
+	*p.destination = T(i)
 	return nil
 }
 
-type uint64Parser struct {
-	destination *uint64
-}
-
-func UInt64(i *uint64) Parser {
-	return &uint64Parser{destination: i}
-}
-
-func (u uint64Parser) Parse(s string) error {
-	i, err := strconv.ParseUint(s, 10, 64)
-	if err != nil {
-		return err
-	}
-	*u.destination = i
-	return nil
+// Int creates a Parser that will parse a path element into i.
+func Int[T IntType](i *T) Parser {
+	return &intParser[T]{destination: i}
 }
