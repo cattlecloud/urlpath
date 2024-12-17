@@ -29,8 +29,8 @@ func Test_Parse(t *testing.T) {
 		})
 
 		must.NoError(t, err)
-		must.EqOp(t, "blah", foo)
-		must.EqOp(t, 31, bar)
+		must.Eq(t, "blah", foo)
+		must.Eq(t, 31, bar)
 		executed = true
 	})
 
@@ -60,8 +60,8 @@ func Test_ParseValues(t *testing.T) {
 	})
 
 	must.NoError(t, err)
-	must.EqOp(t, "blah", foo)
-	must.EqOp(t, 21, bar)
+	must.Eq(t, "blah", foo)
+	must.Eq(t, 21, bar)
 }
 
 func Test_ParseValues_incompatible(t *testing.T) {
