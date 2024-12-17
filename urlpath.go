@@ -123,4 +123,3 @@ func (u uint64Parser) Parse(s string) error {
 	*u.destination = i
 	return nil
 }
-

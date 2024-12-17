@@ -14,6 +14,8 @@ import (
 )
 
 func Test_Parse(t *testing.T) {
+	t.Parallel()
+
 	router := mux.NewRouter()
 	executed := false
 
@@ -42,6 +44,8 @@ func Test_Parse(t *testing.T) {
 }
 
 func Test_ParseValues(t *testing.T) {
+	t.Parallel()
+
 	var foo string
 	var bar int
 	var id uint64
@@ -65,6 +69,8 @@ func Test_ParseValues(t *testing.T) {
 }
 
 func Test_ParseValues_incompatible(t *testing.T) {
+	t.Parallel()
+
 	var foo string
 	var bar int
 
@@ -82,6 +88,8 @@ func Test_ParseValues_incompatible(t *testing.T) {
 }
 
 func Test_ParseValues_missing(t *testing.T) {
+	t.Parallel()
+
 	var foo string
 	var bar int
 
@@ -98,8 +106,9 @@ func Test_ParseValues_missing(t *testing.T) {
 }
 
 func Test_Parameter_String(t *testing.T) {
+	t.Parallel()
+
 	p := Parameter("foo")
 	s := p.String()
 	must.EqOp(t, "{foo}", s)
 }
-
