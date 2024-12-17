@@ -48,24 +48,20 @@ func Test_ParseValues(t *testing.T) {
 
 	var foo string
 	var bar int
-	var id uint64
 
 	values := map[string]string{
 		"foo": "blah",
 		"bar": "21",
-		"id":  "42",
 	}
 
 	err := ParseValues(values, Schema{
 		"foo": String(&foo),
 		"bar": Int(&bar),
-		"id":  UInt64(&id),
 	})
 
 	must.NoError(t, err)
 	must.EqOp(t, "blah", foo)
 	must.EqOp(t, 21, bar)
-	must.EqOp(t, 42, id)
 }
 
 func Test_ParseValues_incompatible(t *testing.T) {
@@ -111,4 +107,40 @@ func Test_Parameter_String(t *testing.T) {
 	p := Parameter("foo")
 	s := p.String()
 	must.EqOp(t, "{foo}", s)
+}
+
+func Test_ParseValues_StringType_Parse(t *testing.T) {
+	t.Parallel()
+
+	values := map[string]string{
+		"KEY": "value",
+	}
+
+	type ident string
+
+	var id ident
+
+	err := ParseValues(values, Schema{
+		"KEY": String(&id),
+	})
+	must.NoError(t, err)
+	must.Eq(t, "value", id)
+}
+
+func Test_ParseValues_IntType_Parse(t *testing.T) {
+	t.Parallel()
+
+	type years int
+	var age years
+
+	values := map[string]string{
+		"age": "51",
+	}
+
+	err := ParseValues(values, Schema{
+		"age": Int(&age),
+	})
+
+	must.NoError(t, err)
+	must.Eq(t, 51, age)
 }
