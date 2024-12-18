@@ -6,12 +6,44 @@
 
 `urlpath` provides a way to parse URL path elements using a schema
 
+For users of [gorilla/mux](https://github.com/gorilla/mux).
+
 ### Getting Started
 
 The `urlpath` package can be added to a project by running:
 
 ```shell
 go get cattlecloud.net/go/urlpath@latest
+```
+
+```go
+import "cattlecloud.net/go/urlpath"
+```
+
+### Examples
+
+##### mux definition
+
+Make use of gorilla's path variables.
+
+```go
+router.Handle("/v1/{category}/{name}, newHandler())
+```
+
+##### parsing schema
+
+Create a `Schema` and call `Parse` to extract the path variables.
+
+```go
+var (
+  category int
+  name     string
+)
+
+err := urlpath.Parse(request, urlpath.Schema {
+  "category": urlpath.Int(&category),
+  "name":     urlpath.String(&name),
+})
 ```
 
 ### License
