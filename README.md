@@ -27,7 +27,7 @@ import "cattlecloud.net/go/urlpath"
 Make use of gorilla's path variables.
 
 ```go
-router.Handle("/v1/{category}/{name}, newHandler())
+router.Handle("/v1/{category}/{name}", newHandler())
 ```
 
 ##### parsing schema
@@ -40,6 +40,15 @@ var (
   name     string
 )
 
+urlpath.MustParse(request, urlpath.Schema {
+  "category": urlpath.Int(&category),
+  "name":     urlpath.String(&name),
+})
+```
+
+A `error` version also exists.
+
+```go
 err := urlpath.Parse(request, urlpath.Schema {
   "category": urlpath.Int(&category),
   "name":     urlpath.String(&name),
