@@ -13,6 +13,64 @@ import (
 	"github.com/shoenig/test/must"
 )
 
+func Test_MustParse(t *testing.T) {
+	t.Parallel()
+
+	router := mux.NewRouter()
+	executed := false
+
+	router.HandleFunc("/v1/{foo}/{bar}", func(_ http.ResponseWriter, r *http.Request) {
+		var foo string
+		var bar int
+
+		MustParse(r, Schema{
+			"foo": String(&foo),
+			"bar": Int(&bar),
+		})
+
+		must.Eq(t, "blah", foo)
+		must.Eq(t, 31, bar)
+		executed = true
+	})
+
+	w := httptest.NewRecorder()
+	ctx := context.Background()
+	request, err := http.NewRequestWithContext(ctx, http.MethodGet, "/v1/blah/31", nil)
+	must.NoError(t, err)
+
+	router.ServeHTTP(w, request)
+	must.True(t, executed)
+}
+
+func Test_MustParse_panic(t *testing.T) {
+	t.Parallel()
+
+	router := mux.NewRouter()
+	executed := false
+
+	router.HandleFunc("/v1/{foo}/{bar}", func(_ http.ResponseWriter, r *http.Request) {
+		var foo string
+		var bar int
+
+		executed = true
+
+		must.Panic(t, func() {
+			MustParse(r, Schema{
+				"foo": String(&foo),
+				"bar": Int(&bar),
+			})
+		})
+	})
+
+	w := httptest.NewRecorder()
+	ctx := context.Background()
+	request, err := http.NewRequestWithContext(ctx, http.MethodGet, "/v1/blah/bad", nil)
+	must.NoError(t, err)
+
+	router.ServeHTTP(w, request)
+	must.True(t, executed)
+}
+
 func Test_Parse(t *testing.T) {
 	t.Parallel()
 

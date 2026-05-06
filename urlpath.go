@@ -42,10 +42,23 @@ func (p Parameter) Name() string {
 // Currently only int and string types are supported.
 type Schema map[Parameter]Parser
 
-// Parse will parse the URL path vars from r given the
-// element names and parsers defined in schema.
+// MustParse will parse the URL path vars from r given the
+// element names and parsers defined in schema. If there is
+// a problem parsing the values, a panic is triggered.
 //
-// This method only works with requests being processed by
+// This function only works with requests being processed by
+// handlers of a gorilla/mux.
+func MustParse(r *http.Request, schema Schema) {
+	if err := Parse(r, schema); err != nil {
+		panic("urlpath: " + err.Error())
+	}
+}
+
+// Parse will parse the URL path vars from r given the
+// element names and parsers defined in schema. If there
+// is a problem parsing the values, an error is returned.
+//
+// This function only works with requests being processed by
 // handlers of a gorilla/mux.
 func Parse(r *http.Request, schema Schema) error {
 	return ParseValues(mux.Vars(r), schema)
